@@ -2,4 +2,4 @@
 
 ***  
 
-Practical examples using [CMake] (https://cmake.org/).
+Practical examples using [CMake](https://cmake.org/).
