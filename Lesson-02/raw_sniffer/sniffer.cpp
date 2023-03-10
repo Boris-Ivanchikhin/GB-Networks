@@ -189,8 +189,15 @@ bool Sniffer::write_pcap_header()
     return true;
 }
 
+// *** Course: Network programming in C++
+// *** Lesson 02. Methods of working with traffic. Network problems. Diagnostics.
 
-bool Sniffer::capture_old()
+// 1. Доработайте перехватчик так, чтобы он не искажал передаваемые данные, а записывал их в файл.
+//      P.S.
+//      Отклонений в работе Sniffer::capture() не обнаружено.
+
+
+bool Sniffer::capture()
 {
 
     // First 14 bytes are a fake ethernet header with IPv4 as the protocol.
@@ -233,61 +240,6 @@ bool Sniffer::capture_old()
 
     return true;
 }
-
-// *** Course: Network programming in C++
-// *** Lesson 02. Methods of working with traffic. Network problems. Diagnostics.
-
-// 1. Доработайте перехватчик так, чтобы он не искажал передаваемые данные, а записывал их в файл.
-
-bool Sniffer::capture()
-{
-
-    if (!initialized())
-    {
-        std::cerr << "Sniffer is not initialized, call init() first!" << std::endl;
-        return false;
-    }
-
-     // `char` type is using for the compatibility with Windows.
-    char buffer[BUFFER_SIZE_HDR] = {0};
-
-    struct pcap_sf_pkthdr pkt;
-
-    // Read the next packet, blocking forever.
-    int rc = recv(sock_, buffer, sizeof buffer, 0);
-
-    if (INVALID_SOCKET == rc)
-    {
-        std::cerr << "recv() failed: " << sock_wrap_.get_last_error_string() << std::endl;
-        return false;
-    }
-
-    // End of file for some strange reason, so stop reading packets.
-    if (!rc) return false;
-
-    std::cout << rc << " bytes received..." << std::endl;
-    // Calculate timestamp for this packet.
-    //auto cur_time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-    using namespace std::chrono;
-    auto cur_time = duration_cast<microseconds>(time_point_cast<microseconds>(system_clock::now()).time_since_epoch());
-    auto t_s = seconds(duration_cast<seconds>(cur_time));
-    auto u_s = cur_time - duration_cast<microseconds>(t_s);
-
-    // Set out PCAP packet header fields.
-    pkt.ts.tv_sec = t_s.count();
-    pkt.ts.tv_usec = u_s.count();
-    pkt.caplen = static_cast<uint32_t>(rc);
-    pkt.len = static_cast<uint32_t>(rc);
-
-    // Write packet.
-
-    of_.write(reinterpret_cast<char*>(&pkt), BUFFER_SIZE_HDR);
-    of_.write(reinterpret_cast<const char*>(buffer), rc);
-    of_.flush();
-
-    return true;
-}
-
 
 bool Sniffer::start_capture()
 {

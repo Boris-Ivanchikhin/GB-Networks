@@ -41,7 +41,6 @@ public:
     bool start_capture();
     bool stop_capture();
     bool switch_promisc(bool enabled);
-    bool capture_old();
     bool capture();
 
 protected:
