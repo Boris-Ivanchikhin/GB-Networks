@@ -1,7 +1,0 @@
-#!/bin/sh
-#
-#
-#
-
-killall -s USR1 $PWD/wastesrv
-grep -E "^\([1-4]\)" log.txt |less -S

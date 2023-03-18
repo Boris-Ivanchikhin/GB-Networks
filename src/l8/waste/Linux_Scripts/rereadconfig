@@ -1,6 +1,0 @@
-#!/bin/sh
-#
-#
-#
-
-killall -s HUP $PWD/wastesrv
