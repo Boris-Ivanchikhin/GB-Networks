@@ -1,6 +1,0 @@
-#!/bin/sh
-#
-#
-#
-
-./wastesrv -d log.txt
